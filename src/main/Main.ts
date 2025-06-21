@@ -1,14 +1,16 @@
-import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
-import {readFileSync} from "fs";
-import {windowBoundsFilePath} from "../utils/Common";
+import { app, ipcMain, nativeImage, BrowserWindow, screen } from "electron";
+import { readFileSync } from "fs";
+import { windowBoundsFilePath } from "../utils/Common";
 
 app.on("ready", () => {
     const bounds = windowBounds();
 
     let options: Electron.BrowserWindowConstructorOptions = {
         webPreferences: {
-            experimentalFeatures: true,
-            experimentalCanvasFeatures: true,
+            nodeIntegration: true,
+            contextIsolation: false,
+            webSecurity: false,
+            allowRunningInsecureContent: true,
         },
         titleBarStyle: "hidden",
         resizable: true,

@@ -1,15 +1,8 @@
-import {Observable} from "rxjs/Observable";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import "rxjs/add/observable/timer";
-import "rxjs/add/operator/concatMap";
-import "rxjs/add/operator/filter";
-import "rxjs/add/operator/merge";
-import "rxjs/add/operator/share";
-import "rxjs/add/operator/distinctUntilChanged";
-import "rxjs/add/operator/multicast";
+import { Observable, BehaviorSubject, timer, merge } from "rxjs";
+import { concatMap, filter, distinctUntilChanged, multicast, refCount } from "rxjs/operators";
 
-import {currentBranchName, GitDirectoryPath, repositoryState, RepositoryState} from "../utils/Git";
-import {services} from "./index";
+import { currentBranchName, GitDirectoryPath, repositoryState, RepositoryState } from "../utils/Git";
+import { services } from "./index";
 
 const INTERVAL = 5000;
 
@@ -17,7 +10,7 @@ async function getState(directory: string): Promise<GitState> {
     const state = await repositoryState(directory);
 
     if (state === RepositoryState.NotRepository) {
-        return {kind: "not-repository"};
+        return { kind: "not-repository" };
     } else {
         return {
             kind: "repository",
@@ -28,16 +21,20 @@ async function getState(directory: string): Promise<GitState> {
 }
 
 function createObservable(directory: string) {
-    return Observable
-        .timer(0, INTERVAL)
-        .merge(services.jobs.onFinish.filter(job => job.session.directory === directory))
-        .concatMap(() => getState(directory))
+    return merge(
+        timer(0, INTERVAL),
+        services.jobs.onFinish.pipe(
+            filter((job: any) => job.session.directory === directory)
+        )
+    ).pipe(
+        concatMap(() => getState(directory)),
         // Don't emit if a value didn't change.
-        .distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
+        distinctUntilChanged((x: any, y: any) => JSON.stringify(x) === JSON.stringify(y)),
         // Remember the last value to emit immediately to new subscriptions.
-        .multicast(new BehaviorSubject<GitState>({kind: "not-repository"}))
+        multicast(new BehaviorSubject<GitState>({ kind: "not-repository" })),
         // Automatically stop checking git status when there are no subscriptions anymore.
-        .refCount();
+        refCount()
+    );
 }
 
 export class GitService {

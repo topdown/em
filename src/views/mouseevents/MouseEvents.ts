@@ -1,8 +1,8 @@
-import {ApplicationComponent} from "../ApplicationComponent";
-import {MouseEvent} from "../../Interfaces";
+import { ApplicationComponent } from "../ApplicationComponent";
+import { MouseEvent } from "../../Interfaces";
 import * as fs from "fs";
-import {userFriendlyPath, escapeFilePath, normalizeDirectory} from "../../utils/Common";
-import {Status} from "../../Enums";
+import { userFriendlyPath, escapeFilePath, normalizeDirectory } from "../../utils/Common";
+import { Status } from "../../Enums";
 
 function isDirectory(path: string): boolean {
     return fs.lstatSync(path).isDirectory();
@@ -18,7 +18,8 @@ export function handleMouseEvent(application: ApplicationComponent, event: Mouse
     const promptComponent = sessionComponent.promptComponent;
 
     if (event instanceof DragEvent) {
-        const path = event.dataTransfer.files[0].path;
+        if (!event.dataTransfer?.files[0]) return;
+        const path = (event.dataTransfer.files[0] as any).path;
         let formattedPath = userFriendlyPath(escapeFilePath(path));
 
         if (isDirectory(path)) {

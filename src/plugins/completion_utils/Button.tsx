@@ -1,5 +1,5 @@
 import * as React from "react";
-import {colors} from "../../views/css/colors";
+import { colors } from "../../views/css/colors";
 
 const buttonStyles = (color: string) => ({
   borderColor: color,
@@ -20,7 +20,12 @@ type ButtonProps = {
   color?: string;
 };
 
-export const Button = ({ onClick, children, color = colors.blue }: ButtonProps) => <span
-  style={buttonStyles(color)}
-  onClick={onClick}
->{children}</span>;
+export const Button = ({
+  onClick,
+  children,
+  color = colors.blue,
+}: ButtonProps) => (
+  <span style={buttonStyles(color) as React.CSSProperties} onClick={onClick}>
+    {children}
+  </span>
+);

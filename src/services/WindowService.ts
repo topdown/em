@@ -1,41 +1,37 @@
-import {remote} from "electron";
-import {Observable} from "rxjs/Observable";
-import "rxjs/add/observable/fromEvent";
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/do";
-import {NeverObservable} from "rxjs/observable/NeverObservable";
-import {Subject} from "rxjs/Subject";
+import { ipcRenderer } from "electron";
+import { Observable, Subject, fromEvent, NEVER, merge } from "rxjs";
+import { map } from "rxjs/operators";
 
 export class WindowService {
     readonly onResize: Observable<{}>;
-    readonly onClose = new Subject<{}>();
+    readonly onClose = new Subject<void>();
     readonly onBoundsChange: Observable<Electron.Rectangle>;
 
     constructor() {
-        if (remote) {
-            const electronWindow = remote.BrowserWindow.getAllWindows()[0];
+        // Check if we're in an electron environment
+        if (typeof window !== 'undefined' && (window as any).require) {
+            try {
+                // Use IPC to communicate with main process for window operations
+                this.onResize = fromEvent(window, "resize");
 
-            this.onResize = Observable.fromEvent(electronWindow, "resize")
-                .merge(Observable.fromEvent(electronWindow.webContents, "devtools-opened"))
-                .merge(Observable.fromEvent(electronWindow.webContents, "devtools-closed"));
+                this.onBoundsChange = fromEvent(window, "resize").pipe(
+                    map(() => ({ x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }))
+                );
 
-            this.onBoundsChange = Observable.fromEvent(electronWindow, "move")
-                .merge(Observable.fromEvent(electronWindow, "resize"))
-                .map(() => electronWindow.getBounds());
-
-            window.onbeforeunload = () => {
-                electronWindow
-                    .removeAllListeners()
-                    .webContents
-                    .removeAllListeners("devtools-opened")
-                    .removeAllListeners("devtools-closed")
-                    .removeAllListeners("found-in-page");
-
-                this.onClose.next();
-            };
+                window.onbeforeunload = () => {
+                    this.onClose.next();
+                    // Send message to main process about window closing
+                    ipcRenderer.send('window-closing');
+                };
+            } catch (error) {
+                // Fallback if electron APIs aren't available
+                this.onResize = NEVER;
+                this.onBoundsChange = NEVER;
+            }
         } else {
-            this.onResize = new NeverObservable();
-            this.onBoundsChange = new NeverObservable();
+            // Not in electron environment (e.g., tests)
+            this.onResize = NEVER;
+            this.onBoundsChange = NEVER;
         }
     }
 }

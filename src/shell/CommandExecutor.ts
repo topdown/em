@@ -1,9 +1,9 @@
-import {Job} from "./Job";
-import {Command} from "./BuiltInCommands";
-import {PTY} from "../PTY";
+import { Job } from "./Job";
+import { Command } from "./BuiltInCommands";
+import { PTY } from "../PTY";
 import * as Path from "path";
-import {resolveFile, isWindows, filterAsync, io} from "../utils/Common";
-import {loginShell} from "../utils/Shell";
+import { resolveFile, isWindows, filterAsync, io } from "../utils/Common";
+import { loginShell } from "../utils/Shell";
 
 export class NonZeroExitCodeError extends Error {
 }
@@ -16,7 +16,7 @@ abstract class CommandExecutionStrategy {
     constructor(protected job: Job) {
     }
 
-    abstract startExecution(): Promise<{}>;
+    abstract startExecution(): Promise<void>;
 }
 
 class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
@@ -24,11 +24,11 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
         return Command.isBuiltIn(job.prompt.commandName);
     }
 
-    startExecution() {
+    startExecution(): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 Command.executor(this.job.prompt.commandName)(this.job, this.job.prompt.arguments.map(token => token.value));
-                resolve();
+                resolve(void 0);
             } catch (error) {
                 reject(error.message);
             }
@@ -56,14 +56,14 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
         return await io.fileExists(resolveFile(job.session.directory, job.prompt.commandName));
     }
 
-    startExecution() {
+    startExecution(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.job.setPty(new PTY(
                 this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 this.job.environment.toObject(),
                 this.job.session.dimensions,
                 (data: string) => this.job.output.write(data),
-                (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString())),
+                (exitCode: number) => exitCode === 0 ? resolve(void 0) : reject(new NonZeroExitCodeError(exitCode.toString())),
             ));
         });
     }
@@ -74,7 +74,7 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
         return isWindows;
     }
 
-    startExecution() {
+    startExecution(): Promise<void> {
         return new Promise((resolve) => {
             this.job.setPty(new PTY(
                 [
@@ -85,7 +85,7 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
                 ],
                 this.job.environment.toObject(), this.job.session.dimensions,
                 (data: string) => this.job.output.write(data),
-                (_exitCode: number) => resolve(),
+                (_exitCode: number) => resolve(void 0),
             ));
         });
     }
@@ -108,7 +108,7 @@ export class CommandExecutor {
         ShellExecutionStrategy,
     ];
 
-    static async execute(job: Job): Promise<{}> {
+    static async execute(job: Job): Promise<void> {
         const applicableExecutors = await filterAsync(this.executors, executor => executor.canExecute(job));
 
         if (applicableExecutors.length) {

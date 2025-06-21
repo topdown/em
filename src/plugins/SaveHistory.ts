@@ -1,7 +1,7 @@
-import {appendFileSync} from "fs";
-import {historyFilePath} from "../utils/Common";
-import * as csvStringify from "csv-stringify";
-import {services} from "../services/index";
+import { appendFileSync } from "fs";
+import { historyFilePath } from "../utils/Common";
+import { stringify as csvStringify } from "csv-stringify";
+import { services } from "../services/index";
 
 services.jobs.onFinish.subscribe(job => services.history.add({
     command: job.prompt.value,

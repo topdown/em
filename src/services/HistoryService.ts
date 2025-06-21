@@ -1,10 +1,10 @@
-import {readFileSync} from "fs";
-import {historyFilePath} from "../utils/Common";
+import { readFileSync } from "fs";
+import { historyFilePath } from "../utils/Common";
 import * as _ from "lodash";
 
-import csvParse = require("csv-parse/lib/sync");
-import {SessionID} from "../shell/Session";
-import {Subject} from "rxjs/Subject";
+import { parse as csvParse } from "csv-parse/sync";
+import { SessionID } from "../shell/Session";
+import { Subject } from "rxjs";
 
 interface HistoryRecordWithoutID {
     command: string;
@@ -51,7 +51,7 @@ export class HistoryService {
     }
 
     add(recordWithoutID: HistoryRecordWithoutID) {
-        const record = {id: this.nextID, ...recordWithoutID};
+        const record = { id: this.nextID, ...recordWithoutID };
         this.storage.push(record);
 
         if (this.storage.length > this.maxRecordsCount) {

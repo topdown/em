@@ -1,11 +1,11 @@
 import * as events from "events";
-import {defaultAttributes, createChar, Char} from "./Char";
+import { defaultAttributes, createChar, Char } from "./Char";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
-import {List} from "immutable";
-import {Color, Weight, Brightness, KeyCode, LogLevel, BufferType, ScreenMode} from "./Enums";
-import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
-import {print, error, info, csi, times} from "./utils/Common";
+import { List } from "immutable";
+import { Color, Weight, Brightness, KeyCode, LogLevel, BufferType, ScreenMode } from "./Enums";
+import { Attributes, TerminalLikeDevice, ColorCode } from "./Interfaces";
+import { print, error, info, csi, times } from "./utils/Common";
 import * as _ from "lodash";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
@@ -52,7 +52,7 @@ function or1(value: number | undefined) {
 
 
 function logPosition(buffer: Buffer) {
-    const position = {rowIndex: buffer.cursorRowIndex, columnIndex: buffer.cursorColumnIndex};
+    const position = { rowIndex: buffer.cursorRowIndex, columnIndex: buffer.cursorColumnIndex };
     const char = buffer.at(position);
     const value = char ? char.value : "NULL";
     info(`%crow: ${position.rowIndex + 1}\tcolumn: ${buffer.cursorColumnIndex + 1}\t value: ${value}, rows: ${buffer.size}`, "color: grey");
@@ -98,47 +98,47 @@ const graphicCharset: Dictionary<string> = {
 
 const SGR: { [indexer: string]: (attributes: Attributes) => Attributes } = {
     0: (_attributes: Attributes) => defaultAttributes,
-    1: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright}),
-    2: (attributes: Attributes) => ({...attributes, weight: Weight.Faint}),
-    4: (attributes: Attributes) => ({...attributes, underline: true}),
-    7: (attributes: Attributes) => ({...attributes, inverse: true}),
-    22: (attributes: Attributes) => ({...attributes, weight: Weight.Normal}),
-    24: (attributes: Attributes) => ({...attributes, underline: false}),
-    27: (attributes: Attributes) => ({...attributes, inverse: false}),
-    30: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Black}),
-    31: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Red}),
-    32: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Green}),
-    33: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Yellow}),
-    34: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Blue}),
-    35: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Magenta}),
-    36: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Cyan}),
-    37: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.White}),
-    39: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.White}),
-    40: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Black}),
-    41: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Red}),
-    42: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Green}),
-    43: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Yellow}),
-    44: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Blue}),
-    45: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Magenta}),
-    46: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Cyan}),
-    47: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.White}),
-    49: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Black}),
-    90: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Black}),
-    91: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Red}),
-    92: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Green}),
-    93: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Yellow}),
-    94: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Blue}),
-    95: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Magenta}),
-    96: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Cyan}),
-    97: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.White}),
-    100: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Black}),
-    101: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Red}),
-    102: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Green}),
-    103: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Yellow}),
-    104: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Blue}),
-    105: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Magenta}),
-    106: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Cyan}),
-    107: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.White}),
+    1: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright }),
+    2: (attributes: Attributes) => ({ ...attributes, weight: Weight.Faint }),
+    4: (attributes: Attributes) => ({ ...attributes, underline: true }),
+    7: (attributes: Attributes) => ({ ...attributes, inverse: true }),
+    22: (attributes: Attributes) => ({ ...attributes, weight: Weight.Normal }),
+    24: (attributes: Attributes) => ({ ...attributes, underline: false }),
+    27: (attributes: Attributes) => ({ ...attributes, inverse: false }),
+    30: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.Black }),
+    31: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.Red }),
+    32: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.Green }),
+    33: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.Yellow }),
+    34: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.Blue }),
+    35: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.Magenta }),
+    36: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.Cyan }),
+    37: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.White }),
+    39: (attributes: Attributes) => ({ ...attributes, color: <ColorCode>Color.White }),
+    40: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Black }),
+    41: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Red }),
+    42: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Green }),
+    43: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Yellow }),
+    44: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Blue }),
+    45: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Magenta }),
+    46: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Cyan }),
+    47: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.White }),
+    49: (attributes: Attributes) => ({ ...attributes, backgroundColor: <ColorCode>Color.Black }),
+    90: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Black }),
+    91: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Red }),
+    92: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Green }),
+    93: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Yellow }),
+    94: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Blue }),
+    95: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Magenta }),
+    96: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Cyan }),
+    97: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.White }),
+    100: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Black }),
+    101: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Red }),
+    102: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Green }),
+    103: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Yellow }),
+    104: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Blue }),
+    105: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Magenta }),
+    106: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Cyan }),
+    107: (attributes: Attributes) => ({ ...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.White }),
 };
 
 const CSI = {
@@ -276,11 +276,11 @@ export class Output extends events.EventEmitter {
                 const dimensions = this.activeBuffer.dimensions;
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
-                    this.activeBuffer.moveCursorAbsolute({rowIndex: i, columnIndex: 0});
+                    this.activeBuffer.moveCursorAbsolute({ rowIndex: i, columnIndex: 0 });
                     this.write(Array(dimensions.columns).join("E"));
                 }
 
-                this.activeBuffer.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
+                this.activeBuffer.moveCursorAbsolute({ rowIndex: 0, columnIndex: 0 });
             } else if (collected === "(" && flag === "0") {
                 short = "Designate Graphic Charset to G0";
                 this.activeBuffer.designatedCharacterSets.G0 = CharacterSets.SupplementalGraphics;
@@ -301,23 +301,23 @@ export class Output extends events.EventEmitter {
                 case "A":
                     short = "Cursor up.";
 
-                    this.activeBuffer.moveCursorRelative({vertical: -1});
+                    this.activeBuffer.moveCursorRelative({ vertical: -1 });
                     break;
                 case "B":
                     short = "Cursor down.";
 
-                    this.activeBuffer.moveCursorRelative({vertical: 1});
+                    this.activeBuffer.moveCursorRelative({ vertical: 1 });
                     break;
                 case "C":
                     short = "Cursor right.";
 
-                    this.activeBuffer.moveCursorRelative({horizontal: 1});
+                    this.activeBuffer.moveCursorRelative({ horizontal: 1 });
                     break;
                 case "D":
                     short = "Index (IND).";
                     url = "http://www.vt100.net/docs/vt510-rm/IND";
 
-                    this.activeBuffer.moveCursorRelative({vertical: 1});
+                    this.activeBuffer.moveCursorRelative({ vertical: 1 });
                     break;
                 case "H":
                     short = "Horizontal Tab Set (HTS).";
@@ -333,7 +333,7 @@ export class Output extends events.EventEmitter {
                     if (this.activeBuffer.cursorRowIndex === this.activeBuffer.marginTop) {
                         this.activeBuffer.scrollDown(1);
                     } else {
-                        this.activeBuffer.moveCursorRelative({vertical: -1});
+                        this.activeBuffer.moveCursorRelative({ vertical: -1 });
                     }
                     break;
                 case "E":
@@ -341,8 +341,8 @@ export class Output extends events.EventEmitter {
                     /* tslint:disable:max-line-length */
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
-                    this.activeBuffer.moveCursorRelative({vertical: 1});
-                    this.activeBuffer.moveCursorAbsolute({columnIndex: 0});
+                    this.activeBuffer.moveCursorRelative({ vertical: 1 });
+                    this.activeBuffer.moveCursorAbsolute({ columnIndex: 0 });
                     break;
                 case "7":
                     long = "Save current state (cursor coordinates, attributes, character sets pointed at by G0, G1).";
@@ -385,11 +385,11 @@ export class Output extends events.EventEmitter {
                 if (shouldSet) {
                     description = "132 Column Mode (DECCOLM).";
 
-                    this.dimensions = {columns: 132, rows: this.activeBuffer.dimensions.rows};
+                    this.dimensions = { columns: 132, rows: this.activeBuffer.dimensions.rows };
                 } else {
                     description = "80 Column Mode (DECCOLM).";
 
-                    this.dimensions = {columns: 80, rows: this.activeBuffer.dimensions.rows};
+                    this.dimensions = { columns: 80, rows: this.activeBuffer.dimensions.rows };
                 }
                 this.activeBuffer.clear();
                 // TODO
@@ -485,21 +485,21 @@ export class Output extends events.EventEmitter {
             case "A":
                 short = "Cursor Up Ps Times (default = 1) (CUU).";
 
-                this.activeBuffer.moveCursorRelative({vertical: -(param || 1)});
+                this.activeBuffer.moveCursorRelative({ vertical: -(param || 1) });
                 break;
             case "B":
                 short = "Cursor Down Ps Times (default = 1) (CUD).";
-                this.activeBuffer.moveCursorRelative({vertical: (param || 1)});
+                this.activeBuffer.moveCursorRelative({ vertical: (param || 1) });
                 break;
             case "C":
                 short = "Cursor Forward Ps Times (default = 1) (CUF).";
 
-                this.activeBuffer.moveCursorRelative({horizontal: (param || 1)});
+                this.activeBuffer.moveCursorRelative({ horizontal: (param || 1) });
                 break;
             case "D":
                 short = "Cursor Backward Ps Times (default = 1) (CUB).";
 
-                this.activeBuffer.moveCursorRelative({horizontal: -(param || 1)});
+                this.activeBuffer.moveCursorRelative({ horizontal: -(param || 1) });
                 break;
             // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
             // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
@@ -507,13 +507,13 @@ export class Output extends events.EventEmitter {
                 short = "Cursor Character Absolute [column] (default = [row,1]) (CHA)";
                 url = "http://www.vt100.net/docs/vt510-rm/CHA";
 
-                this.activeBuffer.moveCursorAbsolute({columnIndex: or1(param || 1) - 1});
+                this.activeBuffer.moveCursorAbsolute({ columnIndex: or1(param || 1) - 1 });
                 break;
             case "H":
                 short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
                 url = "http://www.vt100.net/docs/vt510-rm/CUP";
 
-                this.activeBuffer.moveCursorAbsolute({rowIndex: or1(params[0]) - 1, columnIndex: or1(params[1]) - 1});
+                this.activeBuffer.moveCursorAbsolute({ rowIndex: or1(params[0]) - 1, columnIndex: or1(params[1]) - 1 });
                 break;
             case "J":
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
@@ -590,13 +590,13 @@ export class Output extends events.EventEmitter {
                 short = "Line Position Absolute [row] (default = [1,column]) (VPA).";
                 url = "http://www.vt100.net/docs/vt510-rm/VPA";
 
-                this.activeBuffer.moveCursorAbsolute({rowIndex: or1(param || 1) - 1});
+                this.activeBuffer.moveCursorAbsolute({ rowIndex: or1(param || 1) - 1 });
                 break;
             case "f":
                 short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
                 url = "http://www.vt100.net/docs/vt510-rm/HVP";
 
-                this.activeBuffer.moveCursorAbsolute({rowIndex: or1(params[0]) - 1, columnIndex: or1(params[1]) - 1});
+                this.activeBuffer.moveCursorAbsolute({ rowIndex: or1(params[0]) - 1, columnIndex: or1(params[1]) - 1 });
                 break;
             case "g":
                 url = "http://www.vt100.net/docs/vt510-rm/TBC";
@@ -674,8 +674,8 @@ export class Output extends events.EventEmitter {
                 const top = <number>(params[0] ? params[0] - 1 : undefined);
                 const bottom = <number>(params[1] ? params[1] - 1 : undefined);
 
-                this.activeBuffer.margins = {top: top, bottom: bottom};
-                this.activeBuffer.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
+                this.activeBuffer.margins = { top: top, bottom: bottom };
+                this.activeBuffer.moveCursorAbsolute({ rowIndex: 0, columnIndex: 0 });
                 break;
             case "@":
                 url = "http://www.vt100.net/docs/vt510-rm/ICH.html";
@@ -697,9 +697,9 @@ export class Output extends events.EventEmitter {
 
     private setColor(sgr: number, color: ColorCode): void {
         if (sgr === 38) {
-            this.activeBuffer.setAttributes({...this.activeBuffer.attributes, color: color});
+            this.activeBuffer.setAttributes({ ...this.activeBuffer.attributes, color: color });
         } else {
-            this.activeBuffer.setAttributes({...this.activeBuffer.attributes, backgroundColor: color});
+            this.activeBuffer.setAttributes({ ...this.activeBuffer.attributes, backgroundColor: color });
         }
     }
 }
@@ -721,8 +721,8 @@ class Buffer {
     public isAutowrapModeSet = true;
     private scrollback = List<List<Char>>();
     private page = List<List<Char>>();
-    private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
-    private _margins: Margins = {top: 0, left: 0};
+    private _attributes: i.Attributes = { ...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal };
+    private _margins: Margins = { top: 0, left: 0 };
     private savedState: SavedState | undefined;
     private tabStopIndices = _.range(8, 300, 8);
 
@@ -759,22 +759,22 @@ class Buffer {
                 case e.KeyCode.Bell:
                     break;
                 case e.KeyCode.Backspace:
-                    this.moveCursorRelative({horizontal: -1});
+                    this.moveCursorRelative({ horizontal: -1 });
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({columnIndex: this.nextTabStopIndex});
+                    this.moveCursorAbsolute({ columnIndex: this.nextTabStopIndex });
                     break;
                 case e.KeyCode.NewLine:
                 case e.KeyCode.VerticalTab:
                     if (this.cursorRowIndex === this._margins.bottom) {
                         this.scrollUp(1);
                     } else {
-                        this.moveCursorRelative({vertical: 1});
+                        this.moveCursorRelative({ vertical: 1 });
                     }
 
                     break;
                 case e.KeyCode.CarriageReturn:
-                    this.moveCursorAbsolute({columnIndex: 0});
+                    this.moveCursorAbsolute({ columnIndex: 0 });
                     break;
                 case e.KeyCode.ShiftIn:
                     this.selectedCharacterSet = "G0";
@@ -792,15 +792,15 @@ class Buffer {
 
             if (this.cursorColumnIndex === this.dimensions.columns) {
                 if (this.isAutowrapModeSet) {
-                    this.moveCursorAbsolute({columnIndex: 0});
-                    this.moveCursorRelative({vertical: 1});
+                    this.moveCursorAbsolute({ columnIndex: 0 });
+                    this.moveCursorRelative({ vertical: 1 });
                 } else {
-                    this.moveCursorRelative({horizontal: -1});
+                    this.moveCursorRelative({ horizontal: -1 });
                 }
             }
 
             this.set(charObject);
-            this.moveCursorRelative({horizontal: 1});
+            this.moveCursorRelative({ horizontal: 1 });
         }
     }
 
@@ -823,7 +823,7 @@ class Buffer {
     }
 
     setAttributes(attributes: i.Attributes): void {
-        this._attributes = {...this._attributes, ...attributes};
+        this._attributes = { ...this._attributes, ...attributes };
     }
 
     toLines(): string[] {
@@ -870,23 +870,23 @@ class Buffer {
     deleteRight(n: number) {
         this.page = this.page.update(
             this.cursorRowIndex,
-            row => row.splice(this.cursorColumnIndex, n).concat(this.spaces(n)).toList(),
+            row => row ? row.splice(this.cursorColumnIndex, n).concat(this.spaces(n)).toList() : this.emptyLine,
         );
     }
 
     insertSpaceRight(n: number) {
         this.page = this.page.update(
             this.cursorRowIndex,
-            row => row.splice(this.cursorColumnIndex, 0, this.spaces(n)).toList(),
+            row => row ? row.splice(this.cursorColumnIndex, 0, ...this.spaces(n).toArray()).toList() : this.spaces(n),
         );
     }
 
     eraseRight(n: number) {
         this.page = this.page.update(
             this.cursorRowIndex,
-            row => row.take(this.cursorColumnIndex)
+            row => row ? row.take(this.cursorColumnIndex)
                 .concat(this.spaces(n), row.skip(this.cursorColumnIndex + n))
-                .toList(),
+                .toList() : this.emptyLine,
         );
     }
 
@@ -896,6 +896,10 @@ class Buffer {
 
     clearRowToEnd() {
         const oldRow = this.page.get(this.cursorRowIndex);
+        if (!oldRow) {
+            this.page = this.page.set(this.cursorRowIndex, this.emptyLine);
+            return;
+        }
         const charsToDeleteCount = this.dimensions.columns - this.cursorColumnIndex;
         const newHead = oldRow.splice(this.cursorColumnIndex, charsToDeleteCount);
         const newTail = this.spaces(charsToDeleteCount);
@@ -908,12 +912,12 @@ class Buffer {
         const count = this.cursorColumnIndex + 1;
         this.page = this.page.update(
             this.cursorRowIndex,
-            row => this.spaces(count).concat(row.skip(count)).toList());
+            row => row ? this.spaces(count).concat(row.skip(count)).toList() : this.emptyLine);
     }
 
     clear() {
         this.page = List<List<Char>>();
-        this.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
+        this.moveCursorAbsolute({ rowIndex: 0, columnIndex: 0 });
     }
 
     clearToBeginning() {
@@ -937,7 +941,7 @@ class Buffer {
     }
 
     set margins(margins: Partial<Margins>) {
-        this._margins = {...this._margins, ...margins};
+        this._margins = { ...this._margins, ...margins };
     }
 
     get marginTop(): number {
@@ -952,23 +956,23 @@ class Buffer {
         }
     }
 
-    at(position: RowColumn): Char {
-        return this.page.getIn([position.rowIndex, position.columnIndex]);
+    at(position: RowColumn): Char | undefined {
+        return this.page.getIn([position.rowIndex, position.columnIndex]) as Char | undefined;
     }
 
     saveCurrentState() {
         this.savedState = {
             cursorRowIndex: this.cursorRowIndex,
             cursorColumnIndex: this.cursorColumnIndex,
-            attributes: {...this.attributes},
-            designatedCharacterSets: {...this.designatedCharacterSets},
+            attributes: { ...this.attributes },
+            designatedCharacterSets: { ...this.designatedCharacterSets },
             selectedCharacterSet: this.selectedCharacterSet,
         };
     }
 
     restoreCurrentState() {
         if (this.savedState) {
-            this.moveCursorAbsolute({rowIndex: this.savedState.cursorRowIndex, columnIndex: this.savedState.cursorColumnIndex});
+            this.moveCursorAbsolute({ rowIndex: this.savedState.cursorRowIndex, columnIndex: this.savedState.cursorColumnIndex });
             this.setAttributes(this.savedState.attributes);
             this.selectedCharacterSet = this.savedState.selectedCharacterSet;
             this.designatedCharacterSets = this.savedState.designatedCharacterSets;
@@ -996,9 +1000,9 @@ class Buffer {
 
     private get homePosition(): RowColumn {
         if (this.isOriginModeSet) {
-            return {rowIndex: this._margins.top || 0, columnIndex: this._margins.left || 0};
+            return { rowIndex: this._margins.top || 0, columnIndex: this._margins.left || 0 };
         } else {
-            return {rowIndex: 0, columnIndex: 0};
+            return { rowIndex: 0, columnIndex: 0 };
         }
     }
 

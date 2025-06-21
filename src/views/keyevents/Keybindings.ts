@@ -1,10 +1,10 @@
-import {KeyCode, KeyboardAction, Status} from "../../Enums";
-import {error} from "../../utils/Common";
-import {SearchComponent} from "../SearchComponent";
-import {UserEvent} from "../../Interfaces";
-import {isModifierKey} from "../ViewUtils";
-import {services} from "../../services/index";
-import {ApplicationComponent} from "../ApplicationComponent";
+import { KeyCode, KeyboardAction, Status } from "../../Enums";
+import { error } from "../../utils/Common";
+import { SearchComponent } from "../SearchComponent";
+import { UserEvent } from "../../Interfaces";
+import { isModifierKey } from "../ViewUtils";
+import { services } from "../../services/index";
+import { ApplicationComponent } from "../ApplicationComponent";
 
 export type KeybindingType = {
     action: KeyboardAction,
@@ -231,7 +231,10 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         }
 
         if (isJobRunning) {
-            application.focusedSession.lastJob!.write(event.clipboardData.getData("text/plain"));
+            const clipboardData = (event as ClipboardEvent).clipboardData;
+            if (clipboardData) {
+                application.focusedSession.lastJob!.write(clipboardData.getData("text/plain"));
+            }
 
             event.stopPropagation();
             event.preventDefault();

@@ -1,8 +1,8 @@
-import {KeyboardAction} from "../../Enums";
-import {remote} from "electron";
-import {getAcceleratorForAction} from "../keyevents/Keybindings";
-import {ApplicationComponent} from "../ApplicationComponent";
-import {services} from "../../services";
+import { KeyboardAction } from "../../Enums";
+import { shell } from "electron";
+import { getAcceleratorForAction } from "../keyevents/Keybindings";
+import { ApplicationComponent } from "../ApplicationComponent";
+import { services } from "../../services";
 
 export function buildMenuTemplate(
     app: Electron.App,
@@ -16,7 +16,7 @@ export function buildMenuTemplate(
                 { role: "about" },
                 { type: "separator" },
                 { role: "hide" },
-                { role: "hideothers" },
+                { role: "hideOthers" },
                 { role: "unhide" },
                 { type: "separator" },
                 {
@@ -163,15 +163,13 @@ export function buildMenuTemplate(
                 {
                     label: "GitHub Repository",
                     click: () => {
-                        /* tslint:disable:no-unused-expression */
-                        remote.shell.openExternal("http://l.rw.rw/upterm_repository");
+                        shell.openExternal("http://l.rw.rw/upterm_repository");
                     },
                 },
                 {
                     label: "Leave Feedback",
                     click: () => {
-                        /* tslint:disable:no-unused-expression */
-                        remote.shell.openExternal("http://l.rw.rw/upterm_leave_feedback");
+                        shell.openExternal("http://l.rw.rw/upterm_leave_feedback");
                     },
                 },
             ],

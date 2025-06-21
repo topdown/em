@@ -1,17 +1,17 @@
-import {Subject} from "rxjs/Subject";
+import { Subject } from "rxjs";
 
 function getLetterSize(size: number, fontFamily: string) {
     const height = size + 2;
 
     if (process.env.NODE_ENV === "test") {
 
-        return {width: (size / 2) + 1.5, height: height};
+        return { width: (size / 2) + 1.5, height: height };
     } else {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d")!;
         context.font = `${size}px ${fontFamily}`;
         const metrics = context.measureText("m");
-        return {width: metrics.width, height: height};
+        return { width: metrics.width, height: height };
     }
 }
 

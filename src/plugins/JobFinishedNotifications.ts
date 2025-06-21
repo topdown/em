@@ -1,20 +1,33 @@
-import {services} from "../services/index";
-import {remote} from "electron";
-import {Status} from "../Enums";
+import { services } from "../services/index";
+import { ipcRenderer } from "electron";
+import { Status } from "../Enums";
 
-services.jobs.onFinish.subscribe(job => {
-    const electronWindow = remote.BrowserWindow.getAllWindows()[0];
-
-    if (remote.app.dock && !electronWindow.isFocused()) {
-        remote.app.dock.bounce("informational");
-        remote.app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
+services.jobs.onFinish.subscribe((job: any) => {
+    // Check if window is focused via document API instead of remote
+    if (!document.hasFocus()) {
+        // Send notification requests to main process
+        ipcRenderer.send('job-finished-notification', {
+            status: job.status,
+            command: job.prompt.value,
+            success: job.status === Status.Success
+        });
 
         const title = job.status === Status.Success ? "Completed" : "Failed";
 
-        /* tslint:disable:no-unused-expression */
-        new Notification(title, {body: job.prompt.value});
+        // Use web notification API
+        if (Notification.permission === "granted") {
+            new Notification(title, { body: job.prompt.value });
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification(title, { body: job.prompt.value });
+                }
+            });
+        }
     }
 });
 
-const electronWindow = remote.BrowserWindow.getAllWindows()[0];
-electronWindow.on("focus", () => remote.app.dock && remote.app.dock.setBadge(""));
+// Clear badge when window gains focus
+window.addEventListener("focus", () => {
+    ipcRenderer.send('clear-badge');
+});

@@ -1,9 +1,9 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
 import * as _ from "lodash";
-import * as pty from "node-pty";
-import {loginShell} from "./utils/Shell";
-import {homeDirectory, info} from "./utils/Common";
+import * as pty from "@homebridge/node-pty-prebuilt-multiarch";
+import { loginShell } from "./utils/Shell";
+import { homeDirectory, info } from "./utils/Common";
 
 interface ITerminal {
     write(data: string): void;
@@ -24,7 +24,7 @@ export class PTY {
         info(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
         info(`Dimensions: ${JSON.stringify(dimensions)}}`);
 
-        this.terminal = <any> pty.fork(loginShell.executableName, shellArguments, {
+        this.terminal = <any>pty.spawn(loginShell.executableName, shellArguments, {
             cols: dimensions.columns,
             rows: dimensions.rows,
             cwd: env.PWD,
@@ -69,7 +69,7 @@ export function executeCommand(
     return new Promise((resolve, reject) => {
         const options = {
             ...execOptions,
-            env: _.extend({PWD: directory, SHLVL: 1}, process.env),
+            env: _.extend({ PWD: directory, SHLVL: 1 }, process.env),
             cwd: directory,
             shell: loginShell.commandExecutorPath,
         };

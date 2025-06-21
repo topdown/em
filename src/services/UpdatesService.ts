@@ -1,4 +1,4 @@
-import {remote} from "electron";
+// Updates service functionality disabled - was using deprecated remote API
 import * as https from "https";
 
 export class UpdatesService {
@@ -11,7 +11,8 @@ export class UpdatesService {
             return;
         }
 
-        this.currentVersion = "v" + remote.app.getVersion();
+        // Get version from package.json instead of remote API
+        this.currentVersion = "v" + require("../../../package.json").version;
         this.checkUpdate();
         setInterval(() => this.checkUpdate(), this.INTERVAL);
     }
