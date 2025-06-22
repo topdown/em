@@ -1,16 +1,16 @@
 {
-  "name": "upterm",
-  "productName": "Upterm",
+  "name": "em",
+  "productName": "Em",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "main": "compiled/src/main/Main.js",
-  "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
+  "author": "Jeff Behnke <jeffreydbehnke@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/railsware/upterm.git"
+    "url": "https://github.com/topdown/em.git"
   },
   "bugs": {
-    "url": "https://github.com/railsware/upterm/issues"
+    "url": "https://github.com/topdown/em/issues"
   },
   "engines": {
     "node": ">=8.0.0 || >=10.0.0"
@@ -102,7 +102,7 @@
   },
   "license": "MIT",
   "build": {
-    "appId": "com.github.railsware.upterm",
+    "appId": "com.github.topdown.em",
     "linux": {
       "icon": "icons"
     },

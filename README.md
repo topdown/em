@@ -1,62 +1,35 @@
-[![Join the chat at https://gitter.im/railsware/upterm](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/upterm/Lobby)
-[![Build Status](https://travis-ci.org/railsware/upterm.svg?branch=master)](https://travis-ci.org/railsware/upterm)
+## What is Em?
 
-What Is It?
------------
+**[Em](https://github.com/topdown/em/)** was origonally [Upterm](https://github.com/railsware/upterm/) and I had a fork and been using it for many years.
 
-**[Upterm is looking for maintainers](https://github.com/railsware/upterm/issues/1301)**
+But it has over time become very outdated, so I have spent the time updating it and fixing bugs, along with adding new features.
 
-Upterm (formerly Black Screen) is an IDE in the world of terminals. Strictly speaking, it's both a
-terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
+**[Em](https://github.com/topdown/em/)** (formerly Upterm) is an IDE in the world of terminals. Strictly speaking, it's both a
+terminal emulator and an _interactive_ shell based on [Electron](https://www.electronjs.org/).
 
 ![](README/main.png)
 
-###### Autocompletion
+## Features
 
-Upterm shows the autocompletion box as you type and tries to be smart about what to suggest.
+- Autocompletion
+- Tabs
+- Session management
+- Split screens
+- Session history search
+
+**[Em](https://github.com/topdown/em/)** shows the autocompletion box as you type and tries to be smart about what to suggest.
 Often you can find useful additional information on the right side of the autocompletion, e.g. expanded alias value,
 command descriptions, value of the previous directory (`cd -`), etc.
 
-###### Compatibility
+All command-line programs (including emacs, ssh and vim) should work as expected.
 
-All command-line programs (including emacs, ssh and vim) should work as expected. If you experience any glitches, please [create an issue](https://github.com/railsware/upterm/issues/new).
+## Technologies
 
-Install
-------------
+- [Electron](https://www.electronjs.org/)
+- [TypeScript](http://www.typescriptlang.org/)
+- [ReactJS](https://facebook.github.io/react/)
 
-###### MacOS
-
-```bash
-brew cask install upterm
-```
-
-Beware that the version in Homebrew might be outdated. Visit the [releases](https://github.com/railsware/upterm/releases) page to download the latest version.
-
-###### Linux *(Arch Linux)*
-```bash
-yaourt -S upterm
-```
-
-As with macOS's `brew` install, the AUR may also be outdated. To install the latest version, refer to the [install guide for Linux (Others)](#linux-others).
-
-###### Linux *(Others)*
-
-* Download and open the AppImage file from the [releases](https://github.com/railsware/upterm/releases) page.
-
-###### Windows
-
-Windows is not officially supported at the moment. The [Windows Support](https://github.com/railsware/upterm/issues/800) Issue explains potential experimental support.
-
-Technologies
-------------
-
-* [Electron](http://electron.atom.io/)
-* [TypeScript](http://www.typescriptlang.org/)
-* [ReactJS](https://facebook.github.io/react/)
-
-
-More Screenshots
-----------------
+## More Screenshots
 
 ![](README/npm_autocompletion.png)
 ![](README/error.png)
@@ -67,23 +40,26 @@ More Screenshots
 ![](README/htop.png)
 ![](README/cd.png)
 
-Development Setup
-------------
+## Development Setup
 
 ```bash
-git clone https://github.com/railsware/upterm.git && cd upterm
+git clone https://github.com/topdown/em.git
+
+cd em
+
+npm install
+
 npm start
 ```
+
 Instructions are available for [debugging the application in Visual Studio Code](docs/vscodedebugging.md).
 
 To create a standalone application, execute `npm run pack` in the project directory.
 
-Contributing
-------------
+## Contributing
 
 See [Contributing Guide](CONTRIBUTING.md).
 
-License
--------
+## License
 
 [The MIT License](LICENSE).
