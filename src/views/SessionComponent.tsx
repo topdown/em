@@ -10,6 +10,7 @@ import { shell } from "electron";
 import { services } from "../services/index";
 import { colors } from "./css/colors";
 import { Subscription } from "rxjs";
+import { Session } from "../shell/Session";
 
 interface Props {
   sessionID: SessionID;
@@ -33,7 +34,17 @@ export class SessionComponent extends React.Component<Props, {}> {
   }
 
   render() {
-    const jobs = _.takeRight(this.session.jobs, this.RENDER_JOBS_COUNT)
+    // The session might have been closed already (e.g., via keyboard shortcut).
+    // Access the sessions map directly so we can get an undef rather than throwing.
+    const session: Session | undefined = (
+      services.sessions as any
+    ).sessions?.get(this.props.sessionID);
+
+    if (!session) {
+      return null;
+    }
+
+    const jobs = _.takeRight(session.jobs, this.RENDER_JOBS_COUNT)
       .slice()
       .reverse()
       .map((job: Job, index: number) => (
@@ -41,9 +52,7 @@ export class SessionComponent extends React.Component<Props, {}> {
           key={job.id}
           job={job}
           jobStatus={job.status}
-          isFocused={
-            this.props.isFocused && index === this.session.jobs.length - 1
-          }
+          isFocused={this.props.isFocused && index === session.jobs.length - 1}
         />
       ));
 

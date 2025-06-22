@@ -97,6 +97,50 @@ export function buildMenuTemplate(
             label: "Session",
             submenu: [
                 {
+                    label: "New Session",
+                    accelerator: getAcceleratorForAction(KeyboardAction.sessionNew),
+                    click: () => {
+                        application.createNewSession();
+                    },
+                },
+                {
+                    type: "separator",
+                },
+                {
+                    label: "Split Horizontally",
+                    accelerator: getAcceleratorForAction(KeyboardAction.sessionSplitHorizontal),
+                    click: () => {
+                        application.splitSessionHorizontally();
+                    },
+                },
+                {
+                    label: "Split Vertically",
+                    accelerator: getAcceleratorForAction(KeyboardAction.sessionSplitVertical),
+                    click: () => {
+                        application.splitSessionVertically();
+                    },
+                },
+                {
+                    type: "separator",
+                },
+                {
+                    label: "Next Session",
+                    accelerator: getAcceleratorForAction(KeyboardAction.sessionFocusNext),
+                    click: () => {
+                        application.focusNextSession();
+                    },
+                },
+                {
+                    label: "Previous Session",
+                    accelerator: getAcceleratorForAction(KeyboardAction.sessionFocusPrevious),
+                    click: () => {
+                        application.focusPreviousSession();
+                    },
+                },
+                {
+                    type: "separator",
+                },
+                {
                     label: "Other Session",
                     accelerator: getAcceleratorForAction(KeyboardAction.otherSession),
                     click: () => {
@@ -104,10 +148,20 @@ export function buildMenuTemplate(
                     },
                 },
                 {
+                    type: "separator",
+                },
+                {
                     label: "Close Current Session",
                     accelerator: getAcceleratorForAction(KeyboardAction.sessionClose),
                     click: () => {
                         application.closeFocusedSession();
+                    },
+                },
+                {
+                    label: "Close All Sessions in Tab",
+                    accelerator: getAcceleratorForAction(KeyboardAction.sessionCloseAll),
+                    click: () => {
+                        application.closeAllSessionsInTab();
                     },
                 },
             ],
@@ -143,9 +197,34 @@ export function buildMenuTemplate(
                     type: "separator",
                 },
                 {
+                    label: "Move Tab Left",
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabMoveLeft),
+                    click: () => {
+                        application.moveTabLeft();
+                    },
+                },
+                {
+                    label: "Move Tab Right",
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabMoveRight),
+                    click: () => {
+                        application.moveTabRight();
+                    },
+                },
+                {
+                    type: "separator",
+                },
+                {
                     label: "Close Current Tab",
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabClose),
                     click: () => {
                         application.closeFocusedTab();
+                    },
+                },
+                {
+                    label: "Close Other Tabs",
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabCloseOthers),
+                    click: () => {
+                        application.closeOtherTabs();
                     },
                 },
             ],

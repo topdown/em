@@ -82,5 +82,5 @@ export function colorValue(color: ColorCode, options = {isBright: false}) {
     }
 }
 export const textColor = "#EEEEEE";
-export const backgroundColor = darken(colors.black, 4);
+export const backgroundColor = darken(colors.blue, 90);
 

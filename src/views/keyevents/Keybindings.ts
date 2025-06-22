@@ -76,10 +76,78 @@ export const KeybindingsForActions: KeybindingType[] = [
             return ((e.ctrlKey || isCtrlOrCmd(e)) && e.keyCode >= KeyCode.One && e.keyCode <= KeyCode.Nine);
         },
     },
+    // session navigation commands
+    {
+        action: KeyboardAction.sessionFocusNext,
+        keybinding: (e: KeyboardEvent) => {
+            return isCtrlOrCmd(e) && e.altKey && e.keyCode === KeyCode.Right;
+        },
+    },
+    {
+        action: KeyboardAction.sessionFocusPrevious,
+        keybinding: (e: KeyboardEvent) => {
+            return isCtrlOrCmd(e) && e.altKey && e.keyCode === KeyCode.Left;
+        },
+    },
     // search commands
     {
         action: KeyboardAction.editFindClose,
         keybinding: (e: KeyboardEvent) => e.keyCode === KeyCode.Escape,
+    },
+    // =========================
+    // New Tab actions
+    {
+        action: KeyboardAction.tabNew,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && !e.altKey && e.keyCode === KeyCode.T,
+    },
+    {
+        action: KeyboardAction.tabPrevious,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && !e.altKey && (e.keyCode === KeyCode.LeftBracket || e.key === "["),
+    },
+    {
+        action: KeyboardAction.tabNext,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && !e.altKey && (e.keyCode === KeyCode.RightBracket || e.key === "]"),
+    },
+    {
+        action: KeyboardAction.tabClose,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && !e.altKey && e.keyCode === KeyCode.W,
+    },
+    {
+        action: KeyboardAction.tabCloseOthers,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && e.altKey && e.keyCode === KeyCode.W,
+    },
+    {
+        action: KeyboardAction.tabMoveLeft,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && e.shiftKey && !e.altKey && (e.keyCode === KeyCode.LeftBracket || e.key === "["),
+    },
+    {
+        action: KeyboardAction.tabMoveRight,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && e.shiftKey && !e.altKey && (e.keyCode === KeyCode.RightBracket || e.key === "]"),
+    },
+    // Session actions
+    {
+        action: KeyboardAction.sessionNew,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && !e.altKey && e.keyCode === KeyCode.N,
+    },
+    {
+        action: KeyboardAction.sessionClose,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && e.shiftKey && !e.altKey && e.keyCode === KeyCode.W,
+    },
+    {
+        action: KeyboardAction.sessionCloseAll,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && e.shiftKey && e.altKey && e.keyCode === KeyCode.W,
+    },
+    {
+        action: KeyboardAction.sessionSplitHorizontal,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && e.shiftKey && !e.altKey && e.keyCode === KeyCode.Underscore,
+    },
+    {
+        action: KeyboardAction.sessionSplitVertical,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && !e.altKey && e.keyCode === KeyCode.VerticalBar,
+    },
+    {
+        action: KeyboardAction.otherSession,
+        keybinding: (e: KeyboardEvent) => isCtrlOrCmd(e) && !e.shiftKey && !e.altKey && e.keyCode === KeyCode.D,
     },
 ];
 
@@ -119,8 +187,53 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         accelerator: `${CmdOrCtrl}+]`,
     },
     {
-        action: KeyboardAction.sessionClose,
+        action: KeyboardAction.tabClose,
         accelerator: `${CmdOrCtrl}+W`,
+    },
+    {
+        action: KeyboardAction.tabCloseOthers,
+        accelerator: `${CmdOrCtrl}+Alt+W`,
+    },
+    {
+        action: KeyboardAction.tabMoveLeft,
+        accelerator: `${CmdOrCtrl}+Shift+[`,
+    },
+    {
+        action: KeyboardAction.tabMoveRight,
+        accelerator: `${CmdOrCtrl}+Shift+]`,
+    },
+    // Session commands
+    {
+        action: KeyboardAction.sessionNew,
+        accelerator: `${CmdOrCtrl}+N`,
+    },
+    {
+        action: KeyboardAction.sessionClose,
+        accelerator: `${CmdOrCtrl}+Shift+W`,
+    },
+    {
+        action: KeyboardAction.sessionCloseAll,
+        accelerator: `${CmdOrCtrl}+Alt+Shift+W`,
+    },
+    {
+        action: KeyboardAction.sessionSplitHorizontal,
+        accelerator: `${CmdOrCtrl}+Shift+-`,
+    },
+    {
+        action: KeyboardAction.sessionSplitVertical,
+        accelerator: `${CmdOrCtrl}+\\`,
+    },
+    {
+        action: KeyboardAction.sessionFocusNext,
+        accelerator: `${CmdOrCtrl}+Alt+Right`,
+    },
+    {
+        action: KeyboardAction.sessionFocusPrevious,
+        accelerator: `${CmdOrCtrl}+Alt+Left`,
+    },
+    {
+        action: KeyboardAction.otherSession,
+        accelerator: `${CmdOrCtrl}+D`,
     },
     // edit/clipboard commands
     {
@@ -152,10 +265,6 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         accelerator: `${CmdOrCtrl}+0`,
     },
     // view commands
-    {
-        action: KeyboardAction.otherSession,
-        accelerator: `${CmdOrCtrl}+\\`,
-    },
     {
         action: KeyboardAction.viewToggleFullScreen,
         accelerator: "Ctrl+Shift+F",
@@ -221,6 +330,105 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
+    // -------------------------
+    // Handle keyboard shortcuts only for keyboard events
+    if (event instanceof KeyboardEvent) {
+        const kbEvent = event as KeyboardEvent;
+
+        // Global Tab actions
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.tabNew)) {
+            application.addTab();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.tabPrevious)) {
+            application.focusPreviousTab();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.tabNext)) {
+            application.focusNextTab();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.tabClose)) {
+            application.closeFocusedTab();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.tabCloseOthers)) {
+            application.closeOtherTabs();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.tabMoveLeft)) {
+            application.moveTabLeft();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.tabMoveRight)) {
+            application.moveTabRight();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        // Session actions
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.sessionNew)) {
+            application.createNewSession();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.sessionClose)) {
+            application.closeFocusedSession();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.sessionCloseAll)) {
+            application.closeAllSessionsInTab();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.sessionSplitHorizontal)) {
+            application.splitSessionHorizontally();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.sessionSplitVertical)) {
+            application.splitSessionVertically();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.otherSession)) {
+            application.otherSession();
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
+    }
+
     const isJobRunning = sessionComponent.status === Status.InProgress;
     const promptComponent = sessionComponent.promptComponent;
 
@@ -253,6 +461,23 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
     if (isKeybindingForEvent(event, KeyboardAction.tabFocus)) {
         const position = parseInt(event.key, 10);
         application.focusTab(position - 1);
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    // Session navigation
+    if (isKeybindingForEvent(event, KeyboardAction.sessionFocusNext)) {
+        application.focusNextSession();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (isKeybindingForEvent(event, KeyboardAction.sessionFocusPrevious)) {
+        application.focusPreviousSession();
 
         event.stopPropagation();
         event.preventDefault();

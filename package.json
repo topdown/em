@@ -37,6 +37,7 @@
     "mode-to-permissions": "0.0.2",
     "monaco-editor": "vlad-shatskyi/monaco-editor",
     "node-ansiparser": "2.2.1",
+    "node-pty": "1.0.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "rxjs": "7.8.2",
@@ -78,7 +79,7 @@
   "scripts": {
     "preinstall": "npm prune",
     "postinstall": "npm run rebuild-native",
-    "rebuild-native": "echo 'Using prebuilt binaries, no rebuild needed'",
+    "rebuild-native": "electron-builder install-app-deps --arch=arm64 --platform=darwin",
     "pack": "electron-builder",
     "pack:dir": "electron-builder --dir",
     "dist": "npm run compile && electron-builder",

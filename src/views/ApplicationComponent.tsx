@@ -8,6 +8,7 @@ import { SearchComponent } from "./SearchComponent";
 import { TabComponent } from "./TabComponent";
 import { SessionID } from "../shell/Session";
 import { services } from "../services";
+import { SplitType } from "../Enums";
 import * as _ from "lodash";
 
 type ApplicationState = {
@@ -15,6 +16,7 @@ type ApplicationState = {
     id: number;
     sessionIDs: SessionID[];
     focusedSessionID: SessionID;
+    splitType: SplitType;
   }>;
   focusedTabIndex: number;
 };
@@ -35,6 +37,7 @@ export class ApplicationComponent extends React.Component<
           id: Date.now(),
           sessionIDs: [sessionID],
           focusedSessionID: sessionID,
+          splitType: SplitType.None,
         },
       ],
       focusedTabIndex: 0,
@@ -66,6 +69,8 @@ export class ApplicationComponent extends React.Component<
           isFocused={index === this.state.focusedTabIndex}
           key={tab.id}
           position={index + 1}
+          sessionCount={tab.sessionIDs.length}
+          splitType={tab.splitType}
           activate={() => this.setState({ focusedTabIndex: index })}
           closeHandler={(event: React.MouseEvent<HTMLSpanElement>) => {
             services.sessions.close(this.state.tabs[index].sessionIDs);
@@ -89,7 +94,9 @@ export class ApplicationComponent extends React.Component<
         </div>
         {this.state.tabs.map((tabProps, index) => (
           <TabComponent
-            {...tabProps}
+            sessionIDs={tabProps.sessionIDs}
+            focusedSessionID={tabProps.focusedSessionID}
+            splitType={tabProps.splitType}
             isFocused={index === this.state.focusedTabIndex}
             key={tabProps.id}
             onSessionFocus={(id: SessionID) => {
@@ -131,6 +138,7 @@ export class ApplicationComponent extends React.Component<
         id: Date.now(),
         sessionIDs: [id],
         focusedSessionID: id,
+        splitType: SplitType.None,
       });
       state.focusedTabIndex = state.tabs.length - 1;
 
@@ -169,6 +177,42 @@ export class ApplicationComponent extends React.Component<
     services.sessions.close(sessionIDs);
   }
 
+  moveTabLeft(): void {
+    const currentIndex = this.state.focusedTabIndex;
+    if (currentIndex > 0) {
+      const state = this.cloneState();
+      const tab = state.tabs[currentIndex];
+      state.tabs.splice(currentIndex, 1);
+      state.tabs.splice(currentIndex - 1, 0, tab);
+      state.focusedTabIndex = currentIndex - 1;
+      this.setState(state);
+    }
+  }
+
+  moveTabRight(): void {
+    const currentIndex = this.state.focusedTabIndex;
+    if (currentIndex < this.state.tabs.length - 1) {
+      const state = this.cloneState();
+      const tab = state.tabs[currentIndex];
+      state.tabs.splice(currentIndex, 1);
+      state.tabs.splice(currentIndex + 1, 0, tab);
+      state.focusedTabIndex = currentIndex + 1;
+      this.setState(state);
+    }
+  }
+
+  closeOtherTabs(): void {
+    const focusedTab = this.state.tabs[this.state.focusedTabIndex];
+    const otherTabSessionIDs = this.state.tabs
+      .filter((_, index) => index !== this.state.focusedTabIndex)
+      .map((tab) => tab.sessionIDs)
+      .flat();
+
+    if (otherTabSessionIDs.length > 0) {
+      services.sessions.close(otherTabSessionIDs);
+    }
+  }
+
   /**
    * Session methods.
    */
@@ -179,8 +223,89 @@ export class ApplicationComponent extends React.Component<
     );
   }
 
+  createNewSession(): void {
+    const state = this.cloneState();
+    const id = services.sessions.create();
+    const tabState = state.tabs[state.focusedTabIndex];
+
+    tabState.sessionIDs.push(id);
+    tabState.focusedSessionID = id;
+
+    if (tabState.sessionIDs.length === 2) {
+      tabState.splitType = SplitType.Vertical; // Default to vertical split
+    }
+
+    this.setState(state, () => this.resizeTabSessions(state.focusedTabIndex));
+  }
+
   closeFocusedSession() {
     services.sessions.close(this.focusedSession.id);
+  }
+
+  closeAllSessionsInTab(): void {
+    const sessionIDs = this.state.tabs[this.state.focusedTabIndex].sessionIDs;
+    services.sessions.close(sessionIDs);
+  }
+
+  splitSessionHorizontally(): void {
+    const state = this.cloneState();
+    const tabState = state.tabs[state.focusedTabIndex];
+
+    if (tabState.sessionIDs.length < 4) {
+      // Allow up to 4 sessions
+      const id = services.sessions.create();
+      tabState.sessionIDs.push(id);
+      tabState.focusedSessionID = id;
+      tabState.splitType = SplitType.Horizontal;
+
+      this.setState(state, () => this.resizeTabSessions(state.focusedTabIndex));
+    }
+  }
+
+  splitSessionVertically(): void {
+    const state = this.cloneState();
+    const tabState = state.tabs[state.focusedTabIndex];
+
+    if (tabState.sessionIDs.length < 4) {
+      // Allow up to 4 sessions
+      const id = services.sessions.create();
+      tabState.sessionIDs.push(id);
+      tabState.focusedSessionID = id;
+      tabState.splitType = SplitType.Vertical;
+
+      this.setState(state, () => this.resizeTabSessions(state.focusedTabIndex));
+    }
+  }
+
+  focusNextSession(): void {
+    const state = this.cloneState();
+    const tabState = state.tabs[state.focusedTabIndex];
+
+    if (tabState.sessionIDs.length > 1) {
+      const currentIndex = tabState.sessionIDs.findIndex(
+        (id) => id === tabState.focusedSessionID
+      );
+      const nextIndex = (currentIndex + 1) % tabState.sessionIDs.length;
+      tabState.focusedSessionID = tabState.sessionIDs[nextIndex];
+
+      this.setState(state);
+    }
+  }
+
+  focusPreviousSession(): void {
+    const state = this.cloneState();
+    const tabState = state.tabs[state.focusedTabIndex];
+
+    if (tabState.sessionIDs.length > 1) {
+      const currentIndex = tabState.sessionIDs.findIndex(
+        (id) => id === tabState.focusedSessionID
+      );
+      const previousIndex =
+        currentIndex === 0 ? tabState.sessionIDs.length - 1 : currentIndex - 1;
+      tabState.focusedSessionID = tabState.sessionIDs[previousIndex];
+
+      this.setState(state);
+    }
   }
 
   otherSession(): void {
@@ -191,6 +316,7 @@ export class ApplicationComponent extends React.Component<
       const id = services.sessions.create();
       tabState.sessionIDs.push(id);
       tabState.focusedSessionID = id;
+      tabState.splitType = SplitType.Vertical; // Default to vertical split
 
       this.setState(state, () => this.resizeTabSessions(state.focusedTabIndex));
     } else {
@@ -231,10 +357,19 @@ export class ApplicationComponent extends React.Component<
       this.removeTabFromState(tabIndex);
     } else {
       const sessionIndex = tabState.sessionIDs.findIndex(
-        (id) => id === tabState.focusedSessionID
+        (sessionId) => sessionId === id
       );
       tabState.sessionIDs.splice(sessionIndex, 1);
-      tabState.focusedSessionID = tabState.sessionIDs[0];
+
+      // Update focused session if the removed session was focused
+      if (tabState.focusedSessionID === id) {
+        tabState.focusedSessionID = tabState.sessionIDs[0];
+      }
+
+      // Reset split type if only one session remains
+      if (tabState.sessionIDs.length === 1) {
+        tabState.splitType = SplitType.None;
+      }
 
       this.setState(state, () => this.resizeTabSessions(tabIndex));
     }

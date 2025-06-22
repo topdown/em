@@ -54,6 +54,8 @@ export enum KeyCode {
     Underscore = 189,
     Period = 190,
     VerticalBar = 220,
+    LeftBracket = 219,
+    RightBracket = 221,
     AltGraph = 225,
 }
 
@@ -100,6 +102,12 @@ export enum LogLevel {
     Error = "error",
 }
 
+export enum SplitType {
+    None = "none",
+    Horizontal = "horizontal",
+    Vertical = "vertical",
+}
+
 export enum KeyboardAction {
     // CLI commands
     cliClearJobs,
@@ -116,9 +124,23 @@ export enum KeyboardAction {
     tabFocus,
     tabPrevious,
     tabNext,
+    tabClose,
+    tabCloseOthers,
+    tabMoveLeft,
+    tabMoveRight,
     // session commands
-    otherSession,
+    sessionNew,
     sessionClose,
+    sessionCloseAll,
+    sessionSplitHorizontal,
+    sessionSplitVertical,
+    sessionFocusNext,
+    sessionFocusPrevious,
+    sessionResizeUp,
+    sessionResizeDown,
+    sessionResizeLeft,
+    sessionResizeRight,
+    otherSession,
     // edit/clipboard commands
     clipboardCopy,
     clipboardPaste,
