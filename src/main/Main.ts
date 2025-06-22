@@ -28,6 +28,22 @@ app.on("ready", () => {
     // Attach custom application menu.
     attachMenu(app, browserWindow);
 
+    const { Menu } = require("electron");
+    ipcMain.handle("prompt-context-menu", (event) => {
+        const template = [
+            { role: "undo" },
+            { role: "redo" },
+            { type: "separator" },
+            { role: "cut" },
+            { role: "copy" },
+            { role: "paste" },
+            { type: "separator" },
+            { role: "selectAll" },
+        ];
+        const menu = Menu.buildFromTemplate(template);
+        menu.popup({ window: BrowserWindow.fromWebContents(event.sender) as any });
+    });
+
     if (app.dock) {
         app.dock.setIcon(nativeImage.createFromPath("build/icon.png"));
     } else {

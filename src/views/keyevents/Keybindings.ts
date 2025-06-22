@@ -5,6 +5,7 @@ import { UserEvent } from "../../Interfaces";
 import { isModifierKey } from "../ViewUtils";
 import { services } from "../../services/index";
 import { ApplicationComponent } from "../ApplicationComponent";
+import { clipboard } from "electron";
 
 export type KeybindingType = {
     action: KeyboardAction,
@@ -330,6 +331,36 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
+    // Allow the browser/Monaco to handle standard copy, cut, paste shortcuts.
+    if (event instanceof KeyboardEvent) {
+        const isPaste =
+            (event.metaKey || event.ctrlKey) && event.keyCode === KeyCode.V;
+        const isCopyCut =
+            (event.metaKey || event.ctrlKey) &&
+            (event.keyCode === KeyCode.C || event.keyCode === KeyCode.X);
+
+        if (isCopyCut) {
+            // Let browser handle copy/cut
+            sessionComponent.promptComponent.focus();
+            return;
+        }
+
+        if (isPaste) {
+            const text = clipboard.readText();
+            if (!text) {
+                return;
+            }
+
+            if (sessionComponent.status === Status.InProgress) {
+                application.focusedSession.lastJob!.write(text);
+            } else {
+                sessionComponent.promptComponent.insertValueInPlace(text);
+            }
+            event.preventDefault();
+            return;
+        }
+    }
+
     // -------------------------
     // Handle keyboard shortcuts only for keyboard events
     if (event instanceof KeyboardEvent) {
@@ -427,29 +458,45 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
             kbEvent.preventDefault();
             return;
         }
+
+        if (isKeybindingForEvent(kbEvent, KeyboardAction.clipboardPaste)) {
+            const text = clipboard.readText();
+            const isJobRunning = sessionComponent.status === Status.InProgress;
+            if (isJobRunning) {
+                application.focusedSession.lastJob!.write(text);
+            } else {
+                sessionComponent.promptComponent.insertValueInPlace(text);
+            }
+
+            kbEvent.stopPropagation();
+            kbEvent.preventDefault();
+            return;
+        }
     }
 
     const isJobRunning = sessionComponent.status === Status.InProgress;
     const promptComponent = sessionComponent.promptComponent;
 
-    // Pasted data
+    // Clipboard paste (Cmd/Ctrl+V or context menu Paste)
     if (event instanceof ClipboardEvent) {
         if (search.isFocused) {
             return;
         }
 
         if (isJobRunning) {
-            const clipboardData = (event as ClipboardEvent).clipboardData;
+            // When a process is running we send pasted text directly to the PTY
+            const clipboardData = event.clipboardData;
             if (clipboardData) {
-                application.focusedSession.lastJob!.write(clipboardData.getData("text/plain"));
+                application.focusedSession.lastJob!.write(
+                    clipboardData.getData("text/plain"),
+                );
             }
 
             event.stopPropagation();
             event.preventDefault();
-        } else {
-            promptComponent.focus();
+            return;
         }
-
+        // Otherwise follow the browser default so Monaco receives the paste.
         return;
     }
 

@@ -6,6 +6,7 @@ import { Prompt } from "../shell/Prompt";
 import { scan } from "../shell/Scanner";
 import { Session } from "../shell/Session";
 import { services } from "../services/index";
+import { Status } from "../Enums";
 
 interface Props {
   session: Session;
@@ -56,6 +57,7 @@ export class PromptComponent extends React.Component<Props, State> {
       fontSize: services.font.size + 2,
       fontFamily: services.font.family,
       suggestFontSize: services.font.size,
+      contextmenu: false,
       minimap: { enabled: false },
       scrollbar: {
         vertical: "hidden",
@@ -133,6 +135,12 @@ export class PromptComponent extends React.Component<Props, State> {
     this.unbindDefaultAction("editor.action.gotoLine");
 
     this.focus();
+
+    this.promptContentNode.addEventListener("contextmenu", (e: MouseEvent) => {
+      e.preventDefault();
+      const { ipcRenderer } = require("electron");
+      ipcRenderer.invoke("prompt-context-menu");
+    });
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
