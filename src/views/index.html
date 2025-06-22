@@ -120,6 +120,7 @@
             }
 
             .tab-header {
+                -webkit-app-region: no-drag;
                 opacity: 0.3;
                 position: relative;
                 max-width: 200px;
@@ -261,7 +262,7 @@
             /* Session borders for better visual separation */
             .sessions .session {
                 border: 1px solid #191C22;
-                background: var(--background-color);
+                /* background: var(--background-color); */
                 transition: all 0.2s ease-in-out;
                 position: relative;
             }
@@ -522,9 +523,10 @@
                 margin-left: -12px;
                 margin-top: -4px;
             }
+           
             .margin-view-overlays {
-    background: #1d1f23;
-}
+                background: #1d1f23;
+            }
 
             .footer {
                 position: absolute;

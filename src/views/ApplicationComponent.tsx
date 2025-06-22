@@ -10,6 +10,9 @@ import { SessionID } from "../shell/Session";
 import { services } from "../services";
 import { SplitType } from "../Enums";
 import * as _ from "lodash";
+import { KeyboardAction } from "../Enums";
+import { KeybindingsForMenu } from "./keyevents/Keybindings";
+import { ShortcutsOverlayComponent } from "./ShortcutsOverlayComponent";
 
 type ApplicationState = {
   tabs: Array<{
@@ -19,6 +22,7 @@ type ApplicationState = {
     splitType: SplitType;
   }>;
   focusedTabIndex: number;
+  showShortcuts: boolean;
 };
 
 export class ApplicationComponent extends React.Component<
@@ -41,6 +45,7 @@ export class ApplicationComponent extends React.Component<
         },
       ],
       focusedTabIndex: 0,
+      showShortcuts: false,
     };
 
     services.window.onResize.subscribe(() => this.resizeAllSessions());
@@ -58,6 +63,91 @@ export class ApplicationComponent extends React.Component<
       (_event: any, directory: string) =>
         (this.focusedSession.directory = directory)
     );
+  }
+
+  componentDidMount() {
+    ipcRenderer.on("menu-action", (_event, action: any) => {
+      switch (action) {
+        /* Tab commands */
+        case KeyboardAction.tabNew:
+          this.addTab();
+          break;
+        case KeyboardAction.tabPrevious:
+          this.focusPreviousTab();
+          break;
+        case KeyboardAction.tabNext:
+          this.focusNextTab();
+          break;
+        case KeyboardAction.tabClose:
+          this.closeFocusedTab();
+          break;
+        case KeyboardAction.tabCloseOthers:
+          this.closeOtherTabs();
+          break;
+        case KeyboardAction.tabMoveLeft:
+          this.moveTabLeft();
+          break;
+        case KeyboardAction.tabMoveRight:
+          this.moveTabRight();
+          break;
+
+        /* Session commands */
+        case KeyboardAction.sessionNew:
+          this.createNewSession();
+          break;
+        case KeyboardAction.sessionClose:
+          this.closeFocusedSession();
+          break;
+        case KeyboardAction.sessionCloseAll:
+          this.closeAllSessionsInTab();
+          break;
+        case KeyboardAction.sessionSplitHorizontal:
+          this.splitSessionHorizontally();
+          break;
+        case KeyboardAction.sessionSplitVertical:
+          this.splitSessionVertically();
+          break;
+        case KeyboardAction.sessionFocusNext:
+          this.focusNextSession();
+          break;
+        case KeyboardAction.sessionFocusPrevious:
+          this.focusPreviousSession();
+          break;
+        case KeyboardAction.otherSession:
+          this.otherSession();
+          break;
+
+        /* Font size */
+        case KeyboardAction.increaseFontSize:
+          services.font.increaseSize();
+          break;
+        case KeyboardAction.decreaseFontSize:
+          services.font.decreaseSize();
+          break;
+        case KeyboardAction.resetFontSize:
+          services.font.resetSize();
+          break;
+
+        /* Show shortcuts */
+        case "showShortcuts":
+          this.showShortcutsOverlay();
+          break;
+
+        /* Find */
+        case KeyboardAction.editFind:
+          const input = document.querySelector(
+            "input[type=search]"
+          ) as HTMLInputElement | null;
+          if (input) {
+            input.select();
+          }
+          break;
+
+        /* Edit Find Close handled in SearchComponent etc; no-op here */
+        default:
+          break;
+      }
+    });
   }
 
   render() {
@@ -92,6 +182,11 @@ export class ApplicationComponent extends React.Component<
           <SearchComponent />
           <ul className="tabs">{tabs}</ul>
         </div>
+        {this.state.showShortcuts && (
+          <ShortcutsOverlayComponent
+            onClose={() => this.setState({ showShortcuts: false })}
+          />
+        )}
         {this.state.tabs.map((tabProps, index) => (
           <TabComponent
             sessionIDs={tabProps.sessionIDs}
@@ -394,5 +489,9 @@ export class ApplicationComponent extends React.Component<
    */
   private cloneState(): ApplicationState {
     return _.cloneDeep(this.state);
+  }
+
+  private showShortcutsOverlay() {
+    this.setState({ showShortcuts: true });
   }
 }

@@ -1,6 +1,7 @@
 import { app, ipcMain, nativeImage, BrowserWindow, screen } from "electron";
 import { readFileSync } from "fs";
 import { windowBoundsFilePath } from "../utils/Common";
+import { attachMenu } from "./MenuBuilder";
 
 app.on("ready", () => {
     const bounds = windowBounds();
@@ -23,6 +24,9 @@ app.on("ready", () => {
         show: false,
     };
     const browserWindow = new BrowserWindow(options);
+
+    // Attach custom application menu.
+    attachMenu(app, browserWindow);
 
     if (app.dock) {
         app.dock.setIcon(nativeImage.createFromPath("build/icon.png"));
