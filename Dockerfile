@@ -1,14 +1,14 @@
 FROM node:8.11.0
 
-RUN mkdir /upterm
-WORKDIR /upterm
+RUN mkdir /em
+WORKDIR /em
 
 COPY package.json .
 COPY .npmrc .
 
 RUN npm install
-COPY . /upterm
+COPY . /em
 RUN npm run pack
 
 VOLUME /dist
-CMD cp /upterm/dist/*.AppImage /dist
+CMD cp /em/dist/*.AppImage /dist

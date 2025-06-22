@@ -10,8 +10,9 @@ app.on("ready", () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            webSecurity: false,
-            allowRunningInsecureContent: true,
+            webSecurity: process.env.NODE_ENV === "development" ? false : true,
+            allowRunningInsecureContent: false,
+            backgroundThrottling: false,
         },
         titleBarStyle: "hidden",
         resizable: true,

@@ -25,9 +25,9 @@ export class UpdatesService {
         https.get(
             {
                 host: "api.github.com",
-                path: "/repos/railsware/upterm/releases/latest",
+                path: "/repos/topdown/em/releases/latest",
                 headers: {
-                    "User-Agent": "Upterm",
+                    "User-Agent": "Em",
                 },
             },
             (response) => {

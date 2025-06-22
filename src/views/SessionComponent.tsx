@@ -189,7 +189,9 @@ const ReleaseComponent = () => {
     return (
       <span
         className="release-component-link"
-        onClick={() => shell.openExternal("http://l.rw.rw/upterm_releases")}
+        onClick={() =>
+          shell.openExternal("https://github.com/topdown/em/releases/latest")
+        }
       >
         Download New Release
       </span>

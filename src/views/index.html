@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Upterm</title>
+        <title>Em</title>
         <style>
             @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,400i,700');
             ::selection {
@@ -265,6 +265,11 @@
                 /* background: var(--background-color); */
                 transition: all 0.2s ease-in-out;
                 position: relative;
+                overflow: auto;
+            }
+
+            .monaco-scrollable-element {
+                background-color: #333333;
             }
 
             .sessions .session[data-focused=true] {

@@ -50,6 +50,8 @@ export class PromptComponent extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const isProduction = process.env.NODE_ENV === "production";
+
     this.editor = monaco.editor.create(this.promptContentNode, {
       theme: "upterm-prompt-theme",
       model: this.model,
@@ -64,11 +66,22 @@ export class PromptComponent extends React.Component<Props, State> {
         horizontal: "hidden",
       },
       overviewRulerLanes: 0,
-      quickSuggestions: true,
-      quickSuggestionsDelay: 0,
-      parameterHints: true,
+      quickSuggestions: { other: true, comments: false, strings: false },
+      quickSuggestionsDelay: isProduction ? 200 : 50,
+      parameterHints: !isProduction,
       iconsInSuggestions: false,
       wordBasedSuggestions: false,
+      acceptSuggestionOnCommitCharacter: false,
+      acceptSuggestionOnEnter: "off",
+      snippetSuggestions: "none",
+      renderLineHighlight: "none",
+      occurrencesHighlight: false,
+      selectionHighlight: false,
+      // Performance optimizations
+      automaticLayout: false,
+      renderWhitespace: "none",
+      renderControlCharacters: false,
+      fontLigatures: false,
     });
 
     services.font.onChange.subscribe(() => {
@@ -181,9 +194,8 @@ export class PromptComponent extends React.Component<Props, State> {
 
     if (this.isInHistorySearchMode) {
       this.setNormalMode();
-    } else {
-      this.triggerSuggest();
     }
+    // Removed automatic suggestion triggering to improve performance
   }
 
   get isInHistorySearchMode(): boolean {

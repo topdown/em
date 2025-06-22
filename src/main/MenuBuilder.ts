@@ -10,7 +10,7 @@ export function attachMenu(app: App, browserWindow: BrowserWindow) {
 
     const template: MenuItemConstructorOptions[] = [
         {
-            label: "Upterm",
+            label: "Em",
             submenu: [
                 { role: "about" },
                 { type: "separator" },
@@ -189,7 +189,7 @@ export function attachMenu(app: App, browserWindow: BrowserWindow) {
             submenu: [
                 {
                     label: "GitHub Repository",
-                    click: () => shell.openExternal("http://l.rw.rw/upterm_repository"),
+                    click: () => shell.openExternal("https://github.com/topdown/em"),
                 },
                 {
                     label: "Keyboard Shortcuts",
@@ -198,7 +198,7 @@ export function attachMenu(app: App, browserWindow: BrowserWindow) {
                 },
                 {
                     label: "Leave Feedback",
-                    click: () => shell.openExternal("http://l.rw.rw/upterm_leave_feedback"),
+                    click: () => shell.openExternal("https://github.com/topdown/em/issues"),
                 },
             ],
         },

@@ -11,7 +11,7 @@ export function buildMenuTemplate(
 ): Electron.MenuItemConstructorOptions[] {
     return [
         {
-            label: "Upterm",
+            label: "Em",
             submenu: [
                 { role: "about" },
                 { type: "separator" },
@@ -242,13 +242,13 @@ export function buildMenuTemplate(
                 {
                     label: "GitHub Repository",
                     click: () => {
-                        shell.openExternal("http://l.rw.rw/upterm_repository");
+                        shell.openExternal("https://github.com/topdown/em");
                     },
                 },
                 {
                     label: "Leave Feedback",
                     click: () => {
-                        shell.openExternal("http://l.rw.rw/upterm_leave_feedback");
+                        shell.openExternal("https://github.com/topdown/em/issues");
                     },
                 },
             ],
